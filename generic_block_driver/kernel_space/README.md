@@ -27,7 +27,7 @@ required for block devices, memory management, modules, and
 request handling. Key headers:
 
 asm/page.h: Provides page size definitions (used in block size
-setup)
+setup).
 
 blk_types.h, blkdev.h, blk-mq.h: Used for block devices and
 multiqueue request handling.
@@ -173,11 +173,11 @@ Registers the disk with the block subsystem using add_disk.
 
 This function cleans up when the module is unloaded:
 
-	Deletes the disk with del_gendisk.
+Deletes the disk with del_gendisk.
 
-	Frees allocated memory for the disk and RAM.
+Frees allocated memory for the disk and RAM.
 
-	Unregisters the block device.
+Unregisters the block device.
 
 #### 8. Module Macros
 
