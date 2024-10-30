@@ -1,4 +1,4 @@
-obj-m += generic_netdev.o
+obj-m += simple_net_tx_dev.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules

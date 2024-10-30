@@ -209,9 +209,9 @@ static int __init blk_ram_init(void)
 		blk_mq_alloc_disk(&blk_ram_dev->tag_set, &lim, blk_ram_dev->tag_set.driver_data);
 
 	// Sets block sizes (logical and physical) using
-	// blk_queue_logical_block_size and blk_queue_physical_block_size
-	blk_queue_logical_block_size(disk->queue, lbs);
-	blk_queue_physical_block_size(disk->queue, pbs);
+	// queue_logical_block_size and queue_physical_block_size
+	queue_logical_block_size(disk->queue);
+	queue_physical_block_size(disk->queue);
 	queue_max_segments(disk->queue);
 	queue_max_segment_size(disk->queue);
 
