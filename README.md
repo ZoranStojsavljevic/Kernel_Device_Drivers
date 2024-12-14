@@ -12,5 +12,6 @@ following kernels:
 
 	6.11.5-200.fc40.x86_64
 	6.11.10-300.fc41.x86_64
+	6.12.6-200.fc41.x86_64
 
-Date: December 10th, 2024.
+Date: December 26th, 2024.
