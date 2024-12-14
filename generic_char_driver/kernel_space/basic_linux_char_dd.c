@@ -66,36 +66,39 @@ static struct file_operations fops = {
 // Initialize the module
 static int __init char_driver_init(void)
 {
-	printk(KERN_INFO "GenericDriver: Initializing the driver\n");
+	printk(KERN_INFO "%s: Initializing the driver\n", DEVICE_NAME);
 
 	// Dynamically allocate a major number for the device
 	major_number = register_chrdev(0, DEVICE_NAME, &fops);
 	if (major_number < 0) {
-		printk(KERN_ALERT "GenericDriver failed to register a major number\n");
+		printk(KERN_ALERT "%s failed to register a major number\n", DEVICE_NAME);
 		return major_number;
 	}
-	printk(KERN_INFO "GenericDriver: Registered device [%s] with major number %d\n",
-		DEVICE_NAME, major_number);
+	printk(KERN_INFO "%s: Registered device [%s] with major number %d\n",
+		DEVICE_NAME, DEVICE_NAME, major_number);
 
 	// Register the device class
 	// Old i/f: char_class = class_create(THIS_MODULE, CLASS_NAME);
 	char_class = class_create(CLASS_NAME);
 	if (IS_ERR(char_class)) {
 		unregister_chrdev(major_number, DEVICE_NAME);
-		printk(KERN_ALERT "Failed to register device class [%s]\n", CLASS_NAME);
+		printk(KERN_ALERT "%s: Failed to register device class [%s]\n",
+			DEVICE_NAME, CLASS_NAME);
 		return PTR_ERR(char_class);
 	}
-	printk(KERN_INFO "GenericDriver: Device class registered [%s]\n", CLASS_NAME);
+	printk(KERN_INFO "%s: Device class registered [%s]\n", DEVICE_NAME, CLASS_NAME);
 
 	// Register the device driver
-	char_device = device_create(char_class, NULL, MKDEV(major_number, 0), NULL, DEVICE_NAME);
+	char_device = device_create(char_class, NULL, MKDEV(major_number, 0), NULL,
+			DEVICE_NAME);
 	if (IS_ERR(char_device)) {
 		class_destroy(char_class);
 		unregister_chrdev(major_number, DEVICE_NAME);
-		printk(KERN_ALERT "Failed to create the device [%s]\n", DEVICE_NAME);
+		printk(KERN_ALERT "%s: Failed to create the device [%s]\n",
+			DEVICE_NAME, DEVICE_NAME);
 		return PTR_ERR(char_device);
 	}
-	printk(KERN_INFO "GenericDriver: Device created [%s]\n", DEVICE_NAME);
+	printk(KERN_INFO "%s: Device created [%s]\n", DEVICE_NAME, DEVICE_NAME);
 
 	return 0;
 }
@@ -107,13 +110,14 @@ static void __exit char_driver_exit(void)
 	class_unregister(char_class);
 	class_destroy(char_class);
 	unregister_chrdev(major_number, DEVICE_NAME);
-	printk(KERN_INFO "GenericDriver: Exit from the device driver [%s]\n", DEVICE_NAME);
+	printk(KERN_INFO "%s: Exit from the device driver [%s]\n",
+		DEVICE_NAME, DEVICE_NAME);
 }
 
 // Open the device
 static int device_open(struct inode* inodep, struct file* filep)
 {
-	printk(KERN_INFO "GenericDriver: Device [%s] opened\n", DEVICE_NAME);
+	printk(KERN_INFO "%s: Device [%s] opened\n", DEVICE_NAME, DEVICE_NAME);
 	return 0;
 }
 
@@ -125,10 +129,12 @@ static ssize_t device_read(struct file* filep, char* buffer, size_t len, loff_t*
 	error_count = copy_to_user(buffer, message, message_size);
 
 	if (error_count == 0) {
-		printk(KERN_INFO "GenericDriver: Sent %d characters to the user\n", message_size);
+		printk(KERN_INFO "%s: Sent %d characters to the user\n",
+			DEVICE_NAME, message_size);
 		return (message_size = 0);
 	} else {
-		printk(KERN_INFO "GenericDriver: Failed to send %d characters to the user\n", error_count);
+		printk(KERN_INFO "%s: Failed to send %d characters to the user\n",
+			DEVICE_NAME, error_count);
 		return -EFAULT;
 	}
 }
@@ -138,7 +144,7 @@ static ssize_t device_write(struct file* filep, const char* buffer, size_t len, 
 {
 	sprintf(message, "%s(%zu letters)", buffer, len);
 	message_size = strlen(message);
-	printk(KERN_INFO "GenericDriver: Received %zu characters from the user\n", len);
+	printk(KERN_INFO "%s: Received %zu characters from the user\n", DEVICE_NAME, len);
 	return len;
 }
 
@@ -156,7 +162,8 @@ static long device_ioctl(struct file *filep, unsigned int cmd, unsigned long arg
 			if (copy_to_user((int32_t*)arg, &simulated_register, sizeof(simulated_register))) {
 				return -EFAULT;
 			}
-			printk(KERN_INFO "Simulated register read as %x\n", simulated_register);
+			printk(KERN_INFO "%s: Simulated register read as %x\n",
+				DEVICE_NAME, simulated_register);
 			break;
 
 		default:
@@ -169,7 +176,7 @@ static long device_ioctl(struct file *filep, unsigned int cmd, unsigned long arg
 // Release the device
 static int device_release(struct inode* inodep, struct file* filep)
 {
-	printk(KERN_INFO "GenericDriver: Device [%s] closed\n", DEVICE_NAME);
+	printk(KERN_INFO "%s: Device [%s] closed\n", DEVICE_NAME, DEVICE_NAME);
 	return 0;
 }
 
